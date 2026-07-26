@@ -95,7 +95,7 @@
   .modal h2{ font-size:24px; margin:0 0 8px; font-weight:900; }
   .modal p{ color:var(--muted); font-size:15px; margin:0 0 22px; }
   .king-photo{
-    width:230px; height:230px; border-radius:50%; margin:0 auto 14px;
+    width:min(230px,58vw); height:min(230px,58vw); border-radius:50%; margin:0 auto 14px;
     border:5px solid var(--gold); box-shadow:0 0 0 3px #fff, 0 14px 30px -12px rgba(0,0,0,.5);
     display:flex; align-items:center; justify-content:center; font-size:64px; background:linear-gradient(135deg,#2a2a2a,#0d0d0d); color:var(--gold);
     object-fit:cover; object-position:50% 30%;
@@ -188,7 +188,7 @@
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 
   @media (max-width:560px){
-    .t-stub{ flex-basis:118px; }
+    .stage{ max-width:520px; } .panel{ padding:26px 20px; } .ticket{ flex-direction:column; } .t-stub{ flex-basis:auto; width:100%; border-left:none; border-top:2px dashed var(--line); } .t-stub::before{ top:-11px; left:-11px; } .t-stub::after{ top:-11px; left:auto; right:-11px; bottom:auto; } .t-stub .stub-list{ display:none; } .stub-route{ justify-content:center; } .stub-city{ padding:0 6px; } .stub-status{ margin-top:10px; }
     .detail-row{ grid-template-columns:repeat(2,1fr); row-gap:12px; }
   }
 </style>
