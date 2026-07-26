@@ -2,31 +2,31 @@
 <style>
   /* ===== CONFIG-DRIVEN BOARDING PASS INVITE ===== */
   :root{
-    --red:#E4002B;
-    --red-deep:#B30020;
-    --ink:#161616;
+    --red:#0038A8;
+    --red-deep:#002766;
+    --ink:#12233b;
     --paper:#ffffff;
-    --paper2:#f6f4f0;
-    --muted:#8a8a8a;
-    --line:#e2ded7;
-    --gold:#D4AF37;
-    --map:#e9e6e0;
-    --bg:#eceae6;
+    --paper2:#eef4fb;
+    --muted:#6b7f97;
+    --line:#d7e0ec;
+    --gold:#F2B705;
+    --map:#dbe7f5;
+    --bg:#e9f1fa;
     --panel:#ffffff;
-    --panel-ink:#161616;
-    --shadow:0 20px 50px -20px rgba(0,0,0,.45);
+    --panel-ink:#12233b;
+    --shadow:0 20px 50px -20px rgba(6,28,64,.45);
   }
   @media (prefers-color-scheme: dark){
-    :root{ --bg:#14140f; }
+    :root{ --bg:#0a1526; }
   }
-  :root[data-theme="dark"]{ --bg:#14140f; }
-  :root[data-theme="light"]{ --bg:#eceae6; }
+  :root[data-theme="dark"]{ --bg:#0a1526; }
+  :root[data-theme="light"]{ --bg:#e9f1fa; }
 
   *{ box-sizing:border-box; }
   html,body{ margin:0; }
   body{
     background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(228,0,43,.10), transparent 60%),
+      radial-gradient(1200px 600px at 50% -10%, rgba(0,56,168,.12), transparent 60%),
       var(--bg);
     color:var(--ink);
     font-family:"Helvetica Neue", Arial, "Segoe UI", system-ui, sans-serif;
@@ -105,16 +105,16 @@
     box-shadow:var(--shadow); color:var(--ink);
   }
   .t-main{ flex:1 1 auto; min-width:0; position:relative; }
-  .map-bg{ position:absolute; inset:0; opacity:.5; pointer-events:none;
-    background-image:radial-gradient(var(--map) 1.4px, transparent 1.4px);
-    background-size:11px 11px; }
+  .map-bg{ position:absolute; inset:0; opacity:1; pointer-events:none;
+    background-image:radial-gradient(140px 140px at 88% 20%, rgba(242,183,5,.20), transparent 70%), radial-gradient(var(--map) 1.4px, transparent 1.4px);
+    background-size:auto, 11px 11px; }
   .t-head{
     position:relative; background:var(--red); color:#fff; display:flex; align-items:center; gap:12px;
     padding:16px 18px;
   }
-  .logo{ width:40px; height:40px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
-  .logo svg{ width:24px; height:24px; fill:var(--red); }
-  .airline{ font-size:clamp(17px,3.6vw,25px); font-weight:900; letter-spacing:.01em; line-height:1; }
+  .brand{ display:flex; flex-direction:column; gap:3px; } .elal{ display:inline-flex; align-items:center; gap:8px; font-size:clamp(20px,4.4vw,30px); font-weight:900; font-style:italic; letter-spacing:.06em; line-height:1; color:#fff; } .elal .magen{ width:18px; height:18px; color:var(--gold); flex:0 0 auto; } .tag{ font-size:10px; letter-spacing:.18em; font-weight:700; opacity:.92; text-transform:uppercase; color:#fff; }
+  .meander{ height:20px; background-color:var(--red); background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="20"%3E%3Cpath d="M0 10 L0 3 L15 3 L15 17 L8 17 L8 10 L24 10" fill="none" stroke="%23ffffff" stroke-width="2.4"/%3E%3C/svg%3E'); background-repeat:repeat-x; background-position:center; }
+
   .t-head .bp{ margin-left:auto; text-align:right; }
   .t-head .bp b{ display:block; font-size:13px; font-weight:900; letter-spacing:.08em; }
   .t-head .bp span{ font-size:10px; opacity:.9; font-style:italic; letter-spacing:.06em; }
@@ -213,11 +213,11 @@
     <div class="ticket">
       <div class="t-main">
         <div class="t-head">
-          <span class="logo"><svg viewBox="0 0 24 24"><path d="M22 16.5v-2l-8-5V4a1.5 1.5 0 0 0-3 0v5.5l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-4.5z"/></svg></span>
-          <span class="airline" id="tAirline">OR AIRWAYS</span>
-          <span class="bp"><b>BOARDING PASS</b><span>KING EDITION</span></span>
+          <span class="brand"><span class="elal">EL&nbsp;AL<svg class="magen" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l10 17H2z M12 22L2 5h20z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><span class="tag">ISRAEL &middot; KING OR EDITION</span></span>
+
+          <span class="bp"><b>BOARDING PASS</b><span>ATHENS &#9992; 2026</span></span>
         </div>
-        <div class="t-body">
+        <div class="meander" aria-hidden="true"></div><div class="t-body">
           <div class="map-bg"></div>
           <div class="route">
             <div class="port from">
