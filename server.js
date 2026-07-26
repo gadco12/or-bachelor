@@ -11,7 +11,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const HOST_KEY = process.env.HOST_KEY || 'changeme';
+const HOST_KEY = process.env.HOST_KEY || 'Gc199611';
 const pool = process.env.DATABASE_URL
   ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
   : null;
