@@ -20,27 +20,43 @@ const pool = process.env.DATABASE_URL
 const BLOB_ID = process.env.BLOB_ID || '019f9f26-ddb4-7e70-9d8b-501ac22b2a06';
 const BLOB_URL = 'https://jsonblob.com/api/jsonBlob/' + BLOB_ID;
 
-async function blobRead() {
+// In-memory cache is the source of truth for reads; the JSONBlob is durable backup.
+// Entries are only ever ADDED (merged by name+timestamp), never removed — so a
+// flaky/rate-limited blob read can never make selections disappear.
+let mem = [];
+const keyOf = e => e.name + '|' + e.ts;
+function mergeInto(target, arr) {
+  const seen = new Set(target.map(keyOf));
+  for (const e of arr) { const k = keyOf(e); if (e && e.name && !seen.has(k)) { target.push(e); seen.add(k); } }
+  return target;
+}
+async function pullRemote() {
   try {
     const r = await fetch(BLOB_URL, { headers: { Accept: 'application/json' } });
-    if (!r.ok) return { rsvps: [] };
+    if (!r.ok) return false;
     const d = await r.json();
-    return d && Array.isArray(d.rsvps) ? d : { rsvps: [] };
-  } catch (e) { return { rsvps: [] }; }
+    if (d && Array.isArray(d.rsvps)) mergeInto(mem, d.rsvps);
+    return true;
+  } catch (e) { return false; }
 }
-async function blobAppend(entry) {
-  const data = await blobRead();
-  data.rsvps.push(entry);
-  await fetch(BLOB_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+async function pushRemote() {
+  try {
+    await fetch(BLOB_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rsvps: mem }) });
+    return true;
+  } catch (e) { console.error('push failed', e); return false; }
 }
+// pull (merge) then push the union — tolerant of transient failures, never loses data
+async function syncStore() { const ok = await pullRemote(); if (ok) await pushRemote(); }
 
 async function init() {
   if (pool) {
     await pool.query('CREATE TABLE IF NOT EXISTS rsvps (id SERIAL PRIMARY KEY, ts TIMESTAMPTZ DEFAULT NOW(), name TEXT, choice TEXT)');
     console.log('Postgres ready.');
-  } else {
-    console.log('Using JSONBlob store: ' + BLOB_URL);
+    return;
   }
+  for (let i = 0; i < 6; i++) { if (await pullRemote()) break; await new Promise(r => setTimeout(r, 1500)); }
+  console.log('Store ready, ' + mem.length + ' RSVPs in memory.');
+  setInterval(syncStore, 20000);
 }
 init().catch(console.error);
 
@@ -54,7 +70,7 @@ app.post('/rsvp', async (req, res) => {
     const name = String(req.body.name || '').slice(0, 120);
     const choice = String(req.body.choice || '').slice(0, 60);
     if (pool) await pool.query('INSERT INTO rsvps(name, choice) VALUES ($1, $2)', [name, choice]);
-    else await blobAppend({ name, choice, ts: Date.now() });
+    else { mem.push({ name, choice, ts: Date.now() }); syncStore(); }
     res.json({ ok: true, stored: true });
   } catch (e) {
     console.error(e);
@@ -70,8 +86,7 @@ app.get('/api/rsvps', async (req, res) => {
       const r = await pool.query('SELECT ts, name, choice FROM rsvps ORDER BY ts DESC');
       return res.json({ rows: r.rows });
     }
-    const data = await blobRead();
-    const rows = data.rsvps
+    const rows = mem
       .slice()
       .sort((a, b) => (b.ts || 0) - (a.ts || 0))
       .map(x => ({ ts: new Date(x.ts).toISOString(), name: x.name, choice: x.choice }));
