@@ -183,6 +183,8 @@
   .share-btn:disabled{ opacity:.7; cursor:default; transform:none; }
   .share .again{ display:block; margin-top:14px; color:var(--muted); background:none; border:none; font:inherit; font-weight:700; cursor:pointer; text-decoration:underline; }
 
+  .sound-btn{ position:fixed; bottom:16px; right:16px; z-index:55; width:52px; height:52px; border-radius:50%; border:none; background:var(--red); color:#fff; font-size:22px; line-height:1; box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .sound-btn:active{ transform:scale(.94); }
   .hidden{ display:none !important; }
   @keyframes rise{ from{ opacity:0; transform:translateY(18px) } to{ opacity:1; transform:none } }
   @keyframes pop{ from{ opacity:0; transform:scale(.9) } to{ opacity:1; transform:none } }
@@ -303,6 +305,8 @@
 
 <!-- MODAL HOST -->
 <div id="scrim" class="scrim hidden"><div class="modal" id="modal"></div></div>
+<audio id="song" src="song.mp3" loop preload="auto"></audio>
+<button id="soundBtn" class="sound-btn" type="button" aria-label="Toggle music"></button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -423,6 +427,20 @@ function drawQR(name){
 function modal(html){ $("#modal").innerHTML=html; $("#scrim").classList.remove("hidden"); }
 function closeModal(){ $("#scrim").classList.add("hidden"); }
 $("#scrim").addEventListener("click", e=>{ if(e.target.id==="scrim") closeModal(); });
+
+/* ---- background music ---- */
+(function(){
+  var song = document.getElementById("song");
+  var btn = document.getElementById("soundBtn");
+  if(!song || !btn) return;
+  function paint(){ btn.textContent = song.paused ? "\uD83D\uDD07" : "\uD83D\uDD0A"; }
+  function start(){ song.volume = 0.55; var p = song.play(); if(p && p.then){ p.then(paint).catch(function(){}); } }
+  var armed = true;
+  function first(e){ if(btn.contains(e.target)) return; if(armed){ armed = false; start(); } document.removeEventListener("pointerdown", first); }
+  document.addEventListener("pointerdown", first);
+  btn.addEventListener("click", function(e){ e.stopPropagation(); armed = false; if(song.paused){ start(); } else { song.pause(); paint(); } });
+  paint();
+})();
 
 /* ---- send ticket image to the group ---- */
 function ticketFilename(){ return "boarding-" + (currentName || "guest").replace(/\s+/g,"-").toLowerCase() + ".png"; }

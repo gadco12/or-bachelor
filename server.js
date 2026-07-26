@@ -27,6 +27,7 @@ init().catch(console.error);
 
 // --- the invite ---
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/song.mp3', (req, res) => res.sendFile(path.join(__dirname, 'song.mp3')));
 
 // --- record an RSVP ---
 app.post('/rsvp', async (req, res) => {
