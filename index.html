@@ -185,6 +185,31 @@
 
   .sound-btn{ position:fixed; bottom:16px; right:16px; z-index:55; width:52px; height:52px; border-radius:50%; border:none; background:var(--red); color:#fff; font-size:22px; line-height:1; box-shadow:var(--shadow); cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .sound-btn:active{ transform:scale(.94); }
+  .host-link{ display:inline-block; margin-top:16px; background:none; border:none; color:var(--muted); font:inherit; font-size:12px; font-weight:700; letter-spacing:.04em; cursor:pointer; opacity:.65; }
+  .host-link:hover{ opacity:1; color:var(--red); }
+  .host-overlay{ position:fixed; inset:0; z-index:80; background:var(--bg); overflow-y:auto; padding:20px 14px 44px; }
+  .host-inner{ max-width:760px; margin:0 auto; position:relative; }
+  .host-close{ position:absolute; top:0; right:0; width:40px; height:40px; border-radius:50%; border:none; background:var(--red); color:#fff; font-size:15px; cursor:pointer; z-index:2; }
+  .host-login{ max-width:360px; margin:12vh auto 0; background:#fff; border-radius:18px; padding:30px 24px; box-shadow:var(--shadow); text-align:center; }
+  .host-h{ font-size:22px; margin:0 0 6px; font-weight:900; color:var(--ink); }
+  .host-sub{ color:var(--muted); font-size:14px; margin:0 0 4px; }
+  .host-login input{ width:100%; padding:15px 14px; font-size:16px; border:2px solid var(--line); border-radius:12px; margin:16px 0 12px; }
+  .host-err{ color:#c0392b; font-size:13px; font-weight:700; min-height:18px; margin:10px 0 0; }
+  .host-bar{ display:flex; justify-content:space-between; align-items:center; margin:6px 0 14px; padding-right:48px; }
+  .host-bar h3{ margin:0; font-size:19px; color:var(--ink); }
+  .host-refresh{ background:var(--red); color:#fff; border:none; border-radius:10px; padding:9px 15px; font-weight:800; cursor:pointer; font-size:13px; }
+  .host-warn{ background:#fff6e0; color:#8a6d1a; border:1px solid #f0dca0; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:600; margin-bottom:14px; }
+  .host-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+  .host-card{ background:#fff; border-radius:14px; padding:16px; box-shadow:var(--shadow); text-align:center; }
+  .host-card .n{ font-size:34px; font-weight:900; line-height:1; }
+  .host-card .l{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-top:6px; }
+  .host-card.c1 .n{ color:#0a7d3c; } .host-card.c2 .n{ color:#c0392b; } .host-card.c3 .n{ color:var(--gold); }
+  .host-table{ width:100%; border-collapse:collapse; background:#fff; border-radius:14px; overflow:hidden; box-shadow:var(--shadow); }
+  .host-table th, .host-table td{ text-align:left; padding:11px 13px; border-bottom:1px solid var(--line); font-size:14px; }
+  .host-table th{ background:var(--red); color:#fff; font-size:11px; letter-spacing:.05em; text-transform:uppercase; }
+  .host-table tr:last-child td{ border-bottom:none; }
+  .host-pill{ display:inline-block; padding:3px 9px; border-radius:999px; font-size:12px; font-weight:700; }
+  .host-pill.c1{ background:#e9f7ee; color:#0a7d3c; } .host-pill.c2{ background:#fdecea; color:#c0392b; } .host-pill.c3{ background:#fef6e0; color:#a9791a; }
   .hidden{ display:none !important; }
   @keyframes rise{ from{ opacity:0; transform:translateY(18px) } to{ opacity:1; transform:none } }
   @keyframes pop{ from{ opacity:0; transform:scale(.9) } to{ opacity:1; transform:none } }
@@ -208,6 +233,7 @@
       <select id="nameSel"><option value="" selected disabled>Select your name…</option></select>
     </div>
     <button id="toRsvp" class="btn" disabled>Continue to check-in →</button>
+      <button class="host-link" id="hostLink" type="button">&#128273; Host login</button>
   </section>
 
   <!-- SCREEN 2: RSVP -->
@@ -307,6 +333,19 @@
 <div id="scrim" class="scrim hidden"><div class="modal" id="modal"></div></div>
 <audio id="song" src="song.mp3" loop preload="auto"></audio>
 <button id="soundBtn" class="sound-btn" type="button" aria-label="Toggle music"></button>
+<div id="hostOverlay" class="host-overlay hidden">
+  <div class="host-inner">
+    <button class="host-close" id="hostClose" type="button" aria-label="Close">&#10005;</button>
+    <div id="hostLogin" class="host-login">
+      <h2 class="host-h">Host access &#128081;</h2>
+      <p class="host-sub">Enter the host key to see everyone&#39;s selections.</p>
+      <input id="hostKey" type="password" placeholder="Host key" autocomplete="current-password">
+      <button class="btn" id="hostEnter" type="button">Enter</button>
+      <p class="host-err" id="hostErr"></p>
+    </div>
+    <div id="hostResults" class="hidden"></div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -476,4 +515,61 @@ async function captureTicket(){
   });
 })();
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ---- in-app host view ---- */
+(function(){
+  const link = document.getElementById("hostLink");
+  const overlay = document.getElementById("hostOverlay");
+  const closeBtn = document.getElementById("hostClose");
+  const loginBox = document.getElementById("hostLogin");
+  const results = document.getElementById("hostResults");
+  const input = document.getElementById("hostKey");
+  const enterBtn = document.getElementById("hostEnter");
+  const errEl = document.getElementById("hostErr");
+  if(!link || !overlay) return;
+  let hkey = "", htimer = null;
+  const ordv = ch => ch==="Coming"?0 : ch==="Not coming"?1 : ch==="Or is king (gag)"?2 : 9;
+  const clsv = ch => ch==="Coming"?"c1" : ch==="Not coming"?"c2" : "c3";
+  function openOverlay(){ overlay.classList.remove("hidden"); loginBox.classList.remove("hidden"); results.classList.add("hidden"); errEl.textContent=""; input.value=""; setTimeout(()=>input.focus(),60); }
+  function closeOverlay(){ overlay.classList.add("hidden"); if(htimer){ clearInterval(htimer); htimer=null; } }
+  function renderData(data){
+    const rows = data.rows || [];
+    const latest = {};
+    rows.forEach(r=>{ if(!(r.name in latest)) latest[r.name]=r; });
+    const people = Object.values(latest);
+    const cnt = v => people.filter(p=>p.choice===v).length;
+    people.sort((a,b)=> ordv(a.choice)-ordv(b.choice) || a.name.localeCompare(b.name));
+    let html = `<div class="host-bar"><h3>Champagne Ori &mdash; RSVPs</h3><button class="host-refresh" id="hostRefresh" type="button">Refresh</button></div>`;
+    if(data.noDb){ html += `<div class="host-warn">No database connected yet, so nothing is stored. Add a Postgres database + DATABASE_URL on Render.</div>`; }
+    html += `<div class="host-cards">
+      <div class="host-card c1"><div class="n">${cnt("Coming")}</div><div class="l">Coming</div></div>
+      <div class="host-card c2"><div class="n">${cnt("Not coming")}</div><div class="l">Not coming</div></div>
+      <div class="host-card c3"><div class="n">${cnt("Or is king (gag)")}</div><div class="l">Or is king</div></div>
+    </div>`;
+    if(people.length){
+      html += `<table class="host-table"><thead><tr><th>Name</th><th>Choice</th><th>When</th></tr></thead><tbody>`;
+      people.forEach(p=>{ html += `<tr><td>${esc(p.name)}</td><td><span class="host-pill ${clsv(p.choice)}">${esc(p.choice)}</span></td><td>${esc(new Date(p.ts).toLocaleString())}</td></tr>`; });
+      html += `</tbody></table>`;
+    } else if(!data.noDb){ html += `<p style="color:#6b7f97;text-align:center;padding:8px">No RSVPs yet. Send the invite and watch them roll in.</p>`; }
+    results.innerHTML = html;
+    const rb = document.getElementById("hostRefresh"); if(rb) rb.addEventListener("click", loadData);
+  }
+  async function loadData(){ if(!hkey) return; try{ const r = await fetch("/api/rsvps?key="+encodeURIComponent(hkey)); if(r.status===401) return; renderData(await r.json()); }catch(e){} }
+  async function tryEnter(){
+    const v = input.value.trim(); if(!v) return;
+    errEl.textContent = "Checking...";
+    try{
+      const r = await fetch("/api/rsvps?key="+encodeURIComponent(v));
+      if(r.status===401){ errEl.textContent = "Wrong host key. Try again."; return; }
+      hkey = v; errEl.textContent = "";
+      loginBox.classList.add("hidden"); results.classList.remove("hidden");
+      renderData(await r.json());
+      if(!htimer) htimer = setInterval(loadData, 15000);
+    }catch(e){ errEl.textContent = "Can't reach the server (host tracking only works on the Render link)."; }
+  }
+  link.addEventListener("click", openOverlay);
+  closeBtn.addEventListener("click", closeOverlay);
+  enterBtn.addEventListener("click", tryEnter);
+  input.addEventListener("keydown", e=>{ if(e.key==="Enter") tryEnter(); });
+})();
 </script>
