@@ -109,9 +109,9 @@
   }
   .t-main{ flex:1 1 auto; min-width:0; position:relative; }
   .map-bg{ position:absolute; inset:0; opacity:1; pointer-events:none;
-    background-image:radial-gradient(140px 140px at 88% 20%, rgba(242,183,5,.20), transparent 70%), radial-gradient(var(--map) 1.4px, transparent 1.4px);
+    background-image:radial-gradient(140px 140px at 88% 20%, rgba(242,183,5,.14), transparent 70%), radial-gradient(var(--map) 1.4px, transparent 1.4px);
     background-size:auto, 11px 11px; }
-  .stamp{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:3; font-family:"Anton",sans-serif; font-size:clamp(28px,9vw,58px); color:var(--gold); opacity:.13; letter-spacing:.04em; transform:rotate(-16deg); white-space:nowrap; }
+  .stamp{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:3; font-family:"Anton",sans-serif; font-size:clamp(28px,9vw,58px); color:var(--gold); opacity:.08; letter-spacing:.04em; transform:rotate(-16deg); white-space:nowrap; }
   .t-head{
     position:relative; background:var(--red); color:#fff; display:flex; align-items:center; gap:12px;
     padding:16px 18px;
@@ -123,29 +123,30 @@
   .t-head .bp b{ display:block; font-size:13px; font-weight:900; letter-spacing:.08em; }
   .t-head .bp span{ font-size:10px; opacity:.9; font-style:italic; letter-spacing:.06em; }
 
-  .t-body{ position:relative; padding:18px 18px 16px; }
+  .t-body{ position:relative; padding:20px 20px 18px; }
   .route{ display:flex; align-items:flex-start; gap:8px; }
   .port{ min-width:0; }
   .port .code{ font-family:"Anton","Archivo",sans-serif; font-size:clamp(36px,10.5vw,62px); font-weight:400; color:var(--red); line-height:.9; letter-spacing:.01em; }
   .port .city{ font-size:clamp(13px,3vw,18px); font-weight:800; letter-spacing:.02em; margin-top:2px; }
-  .port .when{ font-size:12px; color:#333; margin-top:8px; line-height:1.5; }
+  .port .when{ font-size:12.5px; color:#1a1a1a; margin-top:8px; line-height:1.55; }
   .port.to{ text-align:right; margin-left:auto; }
   .path{ flex:1 1 auto; display:flex; align-items:center; justify-content:center; padding-top:14px; min-width:44px; }
   .path svg{ width:100%; height:34px; }
   .dash{ stroke:var(--red); stroke-width:2; stroke-dasharray:2 6; stroke-linecap:round; }
   .plane-ico{ fill:var(--red); }
 
-  .detail-row{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:16px; border-top:1px dashed var(--line); padding-top:12px; }
-  .detail-row .cell .k{ font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; }
-  .detail-row .cell .v{ font-size:13px; font-weight:800; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .detail-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px 8px; margin-top:16px; border-top:1px dashed var(--line); padding-top:14px; }
+  .detail-row .cell.wide{ grid-column:1 / -1; }
+  .detail-row .cell .k{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#5b6b7f; font-weight:700; }
+  .detail-row .cell .v{ font-size:15px; font-weight:800; margin-top:3px; color:var(--ink); line-height:1.15; }
 
   .motto{
     margin-top:14px; border-top:1px dashed var(--line); padding-top:12px;
     display:flex; gap:12px; align-items:flex-end;
   }
   .motto .txt{ flex:1; }
-  .motto .k{ font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--red); font-weight:800; }
-  .motto .v{ font-size:12.5px; font-weight:700; line-height:1.4; margin-top:4px; color:#222; }
+  .motto .k{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--red); font-weight:800; }
+  .motto .v{ font-size:13.5px; font-weight:700; line-height:1.45; margin-top:4px; color:#1a1a1a; }
   .drake{ font-family:"Archivo",sans-serif; font-style:italic; font-weight:700; font-size:11px; color:#a9791a; margin-top:5px; }
   .qr{ flex:0 0 auto; }
   .qr svg{ width:78px; height:78px; display:block; }
@@ -163,8 +164,8 @@
   .stub-route .ar{ color:var(--red); font-size:16px; }
   .stub-city{ display:flex; justify-content:space-between; font-size:9px; font-weight:800; color:#333; margin-top:2px; }
   .stub-list{ margin-top:12px; display:grid; gap:9px; }
-  .stub-list .k{ font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700; }
-  .stub-list .v{ font-size:12px; font-weight:800; }
+  .stub-list .k{ font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:#5b6b7f; font-weight:700; }
+  .stub-list .v{ font-size:13px; font-weight:800; color:var(--ink); }
   .stub-status{ margin-top:12px; background:#e9f7ee; color:#0a7d3c; border:1px solid #bfe6cd; border-radius:8px; padding:7px; font-size:11px; font-weight:900; text-align:center; letter-spacing:.04em; }
 
   .share{ text-align:center; margin-top:20px; }
@@ -186,7 +187,7 @@
 
   @media (max-width:560px){
     .t-stub{ flex-basis:118px; }
-    .detail-row{ grid-template-columns:repeat(3,1fr); row-gap:10px; }
+    .detail-row{ grid-template-columns:repeat(2,1fr); row-gap:12px; }
   }
 </style>
 
@@ -194,7 +195,7 @@
   <!-- SCREEN 1: NAME -->
   <section id="s-name" class="panel">
     <p class="kicker">For all the dogs &#128021;</p>
-    <h1>Champagne Ori</h1>
+    <h1>Champagne Ori Flight</h1>
     <p class="sub">Tel Aviv&nbsp;→&nbsp;Athens · 30 Sep – 4 Oct 2026</p>
     <div class="field">
       <label for="nameSel">Who are you?</label>
@@ -249,7 +250,7 @@
           </div>
 
           <div class="detail-row">
-            <div class="cell"><div class="k">Passenger</div><div class="v" id="tName">—</div></div>
+            <div class="cell wide"><div class="k">Passenger</div><div class="v" id="tName">—</div></div>
             <div class="cell"><div class="k">Flight</div><div class="v">OVO 3009</div></div>
             <div class="cell"><div class="k">Seat</div><div class="v" id="tSeat">—</div></div>
             <div class="cell"><div class="k">Gate</div><div class="v" id="tGate">—</div></div>
