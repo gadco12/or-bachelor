@@ -108,10 +108,10 @@
     box-shadow:var(--shadow); color:var(--ink);
   }
   .t-main{ flex:1 1 auto; min-width:0; position:relative; }
-  .map-bg{ position:absolute; inset:0; opacity:1; pointer-events:none;
+  .map-bg{ display:none; position:absolute; inset:0; opacity:1; pointer-events:none;
     background-image:radial-gradient(140px 140px at 88% 20%, rgba(242,183,5,.14), transparent 70%), radial-gradient(var(--map) 1.4px, transparent 1.4px);
     background-size:auto, 11px 11px; }
-  .stamp{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:3; font-family:"Anton",sans-serif; font-size:clamp(28px,9vw,58px); color:var(--gold); opacity:.08; letter-spacing:.04em; transform:rotate(-16deg); white-space:nowrap; }
+  .stamp{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:3; font-family:"Anton",sans-serif; font-size:clamp(28px,9vw,58px); color:var(--gold); opacity:.06; letter-spacing:.04em; transform:rotate(-16deg); white-space:nowrap; }
   .t-head{
     position:relative; background:var(--red); color:#fff; display:flex; align-items:center; gap:12px;
     padding:16px 18px;
@@ -123,7 +123,7 @@
   .t-head .bp b{ display:block; font-size:13px; font-weight:900; letter-spacing:.08em; }
   .t-head .bp span{ font-size:10px; opacity:.9; font-style:italic; letter-spacing:.06em; }
 
-  .t-body{ position:relative; padding:20px 20px 18px; }
+  .t-body{ position:relative; padding:20px 20px 18px; background-image:radial-gradient(150px 150px at 88% 20%, rgba(242,183,5,.13), transparent 70%), radial-gradient(var(--map) 1.3px, transparent 1.3px); background-size:auto, 12px 12px; }
   .route{ display:flex; align-items:flex-start; gap:8px; }
   .port{ min-width:0; }
   .port .code{ font-family:"Anton","Archivo",sans-serif; font-size:clamp(36px,10.5vw,62px); font-weight:400; color:var(--red); line-height:.9; letter-spacing:.01em; }
