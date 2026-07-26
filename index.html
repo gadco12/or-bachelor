@@ -1,4 +1,7 @@
 <title>Or's Bachelor — Boarding Pass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   /* ===== CONFIG-DRIVEN BOARDING PASS INVITE ===== */
   :root{
@@ -29,7 +32,7 @@
       radial-gradient(1200px 600px at 50% -10%, rgba(0,56,168,.12), transparent 60%),
       var(--bg);
     color:var(--ink);
-    font-family:"Helvetica Neue", Arial, "Segoe UI", system-ui, sans-serif;
+    font-family:"Archivo","Helvetica Neue",Arial,system-ui,sans-serif;
     min-height:100vh;
     display:flex; flex-direction:column; align-items:center;
     padding:28px 16px 64px;
@@ -112,7 +115,7 @@
     position:relative; background:var(--red); color:#fff; display:flex; align-items:center; gap:12px;
     padding:16px 18px;
   }
-  .brand{ display:flex; flex-direction:column; gap:3px; } .elal{ display:inline-flex; align-items:center; gap:8px; font-size:clamp(20px,4.4vw,30px); font-weight:900; font-style:italic; letter-spacing:.06em; line-height:1; color:#fff; } .elal .magen{ width:18px; height:18px; color:var(--gold); flex:0 0 auto; } .tag{ font-size:10px; letter-spacing:.18em; font-weight:700; opacity:.92; text-transform:uppercase; color:#fff; }
+  .brand{ display:flex; flex-direction:column; gap:3px; } .elal{ display:inline-flex; align-items:center; gap:8px; font-family:"Anton","Archivo",sans-serif; font-size:clamp(22px,4.8vw,32px); font-weight:400; letter-spacing:.04em; line-height:1; color:#fff; transform:skewX(-7deg); } .elal .magen{ width:18px; height:18px; color:var(--gold); flex:0 0 auto; } .tag{ font-size:10px; letter-spacing:.18em; font-weight:700; opacity:.92; text-transform:uppercase; color:#fff; }
   .meander{ height:20px; background-color:var(--red); background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="20"%3E%3Cpath d="M0 10 L0 3 L15 3 L15 17 L8 17 L8 10 L24 10" fill="none" stroke="%23ffffff" stroke-width="2.4"/%3E%3C/svg%3E'); background-repeat:repeat-x; background-position:center; }
 
   .t-head .bp{ margin-left:auto; text-align:right; }
@@ -122,7 +125,7 @@
   .t-body{ position:relative; padding:18px 18px 16px; }
   .route{ display:flex; align-items:flex-start; gap:8px; }
   .port{ min-width:0; }
-  .port .code{ font-size:clamp(34px,10vw,60px); font-weight:900; color:var(--red); line-height:.9; letter-spacing:-.02em; }
+  .port .code{ font-family:"Anton","Archivo",sans-serif; font-size:clamp(36px,10.5vw,62px); font-weight:400; color:var(--red); line-height:.9; letter-spacing:.01em; }
   .port .city{ font-size:clamp(13px,3vw,18px); font-weight:800; letter-spacing:.02em; margin-top:2px; }
   .port .when{ font-size:12px; color:#333; margin-top:8px; line-height:1.5; }
   .port.to{ text-align:right; margin-left:auto; }
@@ -154,7 +157,7 @@
   .t-stub::before{ top:-10px; } .t-stub::after{ bottom:-10px; }
   .stub-head{ background:var(--red); color:#fff; margin:-16px -14px 12px; padding:10px 14px; font-size:11px; font-weight:900; letter-spacing:.1em; }
   .stub-route{ display:flex; align-items:center; gap:8px; }
-  .stub-route .c{ font-size:26px; font-weight:900; color:var(--red); line-height:.9; }
+  .stub-route .c{ font-family:"Anton","Archivo",sans-serif; font-size:28px; font-weight:400; color:var(--red); line-height:.9; }
   .stub-route .ar{ color:var(--red); font-size:16px; }
   .stub-city{ display:flex; justify-content:space-between; font-size:9px; font-weight:800; color:#333; margin-top:2px; }
   .stub-list{ margin-top:12px; display:grid; gap:9px; }
@@ -168,6 +171,9 @@
     background:#25D366; color:#fff; font-weight:800; font-size:15px; padding:14px 22px; border-radius:14px; box-shadow:var(--shadow);
     transition:transform .12s ease, filter .12s ease; }
   .wa-btn:hover{ filter:brightness(1.04); transform:translateY(-2px); }
+  .share-btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%; max-width:420px; margin:0 auto 12px; background:var(--red); color:#fff; font-weight:800; font-size:16px; padding:16px 22px; border:none; border-radius:14px; box-shadow:var(--shadow); cursor:pointer; transition:transform .12s ease, filter .12s ease; font-family:inherit; }
+  .share-btn:hover{ filter:brightness(1.06); transform:translateY(-2px); }
+  .share-btn:disabled{ opacity:.7; cursor:default; transform:none; }
   .share .again{ display:block; margin-top:14px; color:var(--muted); background:none; border:none; font:inherit; font-weight:700; cursor:pointer; text-decoration:underline; }
 
   .hidden{ display:none !important; }
@@ -274,6 +280,7 @@
 
     <div class="share">
       <span class="tip">📸 Screenshot this & send it to the group</span>
+      <button class="share-btn" id="shareBtn" type="button">&#128228; Send my ticket to the group</button>
       <a class="wa-btn" id="waJoin" href="#" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.16c-.24.68-1.4 1.3-1.94 1.38-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.8-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3s.75-2.13 1.02-2.42c.27-.29.58-.36.78-.36l.56.01c.18.01.42-.07.66.5.24.58.82 2.01.89 2.16.07.14.12.31.02.5-.1.19-.14.31-.29.48-.14.17-.3.38-.43.51-.14.14-.29.29-.12.58.17.29.75 1.24 1.61 2 1.11.99 2.05 1.3 2.34 1.44.29.14.46.12.63-.07.17-.19.72-.85.91-1.14.19-.29.39-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.22.55.34.07.12.07.68-.17 1.36z"/></svg>
         Join the bachelor WhatsApp group
@@ -286,6 +293,7 @@
 <!-- MODAL HOST -->
 <div id="scrim" class="scrim hidden"><div class="modal" id="modal"></div></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 /* ============================================================
    EDIT HERE — everything you need to customize lives in CONFIG
@@ -389,5 +397,39 @@ function drawQR(name){
 function modal(html){ $("#modal").innerHTML=html; $("#scrim").classList.remove("hidden"); }
 function closeModal(){ $("#scrim").classList.add("hidden"); }
 $("#scrim").addEventListener("click", e=>{ if(e.target.id==="scrim") closeModal(); });
+
+/* ---- send ticket image to the group ---- */
+function ticketFilename(){ return "boarding-" + (currentName || "guest").replace(/\s+/g,"-").toLowerCase() + ".png"; }
+async function captureTicket(){
+  const node = document.querySelector(".ticket");
+  if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
+  const canvas = await html2canvas(node, { scale: Math.min(3, (window.devicePixelRatio || 1) * 2), backgroundColor: "#ffffff", useCORS: true, logging: false });
+  return await new Promise(res => canvas.toBlob(res, "image/png", 0.95));
+}
+(function(){
+  const shareBtn = document.getElementById("shareBtn");
+  if (!shareBtn) return;
+  shareBtn.addEventListener("click", async ()=>{
+    const prev = shareBtn.textContent;
+    shareBtn.disabled = true; shareBtn.textContent = "Preparing your ticket...";
+    try{
+      const blob = await captureTicket();
+      const file = new File([blob], ticketFilename(), { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })){
+        await navigator.share({ files: [file], title: "My boarding pass", text: currentName + " is coming to celebrate! Join: " + (CONFIG.whatsapp || "") });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = ticketFilename();
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=> URL.revokeObjectURL(url), 4000);
+        if (CONFIG.whatsapp) window.open(CONFIG.whatsapp, "_blank", "noopener");
+      }
+    }catch(err){
+      alert("Could not create the image automatically. Please screenshot your ticket and send it to the group.");
+    }finally{
+      shareBtn.disabled = false; shareBtn.textContent = prev;
+    }
+  });
+})();
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 </script>
