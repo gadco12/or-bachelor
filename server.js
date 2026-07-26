@@ -16,12 +16,31 @@ const pool = process.env.DATABASE_URL
   ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
   : null;
 
+// Zero-config fallback store (no database needed): a JSONBlob.
+const BLOB_ID = process.env.BLOB_ID || '019f9f26-ddb4-7e70-9d8b-501ac22b2a06';
+const BLOB_URL = 'https://jsonblob.com/api/jsonBlob/' + BLOB_ID;
+
+async function blobRead() {
+  try {
+    const r = await fetch(BLOB_URL, { headers: { Accept: 'application/json' } });
+    if (!r.ok) return { rsvps: [] };
+    const d = await r.json();
+    return d && Array.isArray(d.rsvps) ? d : { rsvps: [] };
+  } catch (e) { return { rsvps: [] }; }
+}
+async function blobAppend(entry) {
+  const data = await blobRead();
+  data.rsvps.push(entry);
+  await fetch(BLOB_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+}
+
 async function init() {
-  if (!pool) { console.warn('No DATABASE_URL set — RSVPs will not be stored.'); return; }
-  await pool.query(
-    'CREATE TABLE IF NOT EXISTS rsvps (id SERIAL PRIMARY KEY, ts TIMESTAMPTZ DEFAULT NOW(), name TEXT, choice TEXT)'
-  );
-  console.log('Database ready.');
+  if (pool) {
+    await pool.query('CREATE TABLE IF NOT EXISTS rsvps (id SERIAL PRIMARY KEY, ts TIMESTAMPTZ DEFAULT NOW(), name TEXT, choice TEXT)');
+    console.log('Postgres ready.');
+  } else {
+    console.log('Using JSONBlob store: ' + BLOB_URL);
+  }
 }
 init().catch(console.error);
 
@@ -35,7 +54,8 @@ app.post('/rsvp', async (req, res) => {
     const name = String(req.body.name || '').slice(0, 120);
     const choice = String(req.body.choice || '').slice(0, 60);
     if (pool) await pool.query('INSERT INTO rsvps(name, choice) VALUES ($1, $2)', [name, choice]);
-    res.json({ ok: true, stored: !!pool });
+    else await blobAppend({ name, choice, ts: Date.now() });
+    res.json({ ok: true, stored: true });
   } catch (e) {
     console.error(e);
     res.status(500).json({ ok: false });
@@ -45,12 +65,19 @@ app.post('/rsvp', async (req, res) => {
 // --- raw data (host only) ---
 app.get('/api/rsvps', async (req, res) => {
   if (req.query.key !== HOST_KEY) return res.status(401).json({ error: 'unauthorized' });
-  if (!pool) return res.json({ rows: [], noDb: true });
   try {
-    const r = await pool.query('SELECT ts, name, choice FROM rsvps ORDER BY ts DESC');
-    res.json({ rows: r.rows });
+    if (pool) {
+      const r = await pool.query('SELECT ts, name, choice FROM rsvps ORDER BY ts DESC');
+      return res.json({ rows: r.rows });
+    }
+    const data = await blobRead();
+    const rows = data.rsvps
+      .slice()
+      .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+      .map(x => ({ ts: new Date(x.ts).toISOString(), name: x.name, choice: x.choice }));
+    res.json({ rows });
   } catch (e) {
-    res.status(500).json({ error: 'db error' });
+    res.status(500).json({ error: 'store error' });
   }
 });
 
